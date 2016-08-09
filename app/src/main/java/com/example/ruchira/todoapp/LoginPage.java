@@ -7,24 +7,30 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginPage extends AppCompatActivity
 {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate(Bundle p_savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_login_page);
 
+        LoginPage loginPage = this;
+
         TextView errorPanel = (TextView) findViewById(R.id.errorPanel);
-        errorPanel.setText("");
+        errorPanel.setText(Constants.EMPTY_TEXT);
 
         EditText usernameField = (EditText) findViewById(R.id.usernameText);
         EditText passwordField = (EditText) findViewById(R.id.passwordText);
@@ -33,46 +39,56 @@ public class LoginPage extends AppCompatActivity
 
         loginButton.setOnClickListener(onClickListener ->
         {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-
             String username = usernameField.getText().toString();
             String password = passwordField.getText().toString();
 
-            JSONObject requestBody = null;
+            RequestBody requestBody = null;
 
             try
             {
-                requestBody = new JSONObject().put("username", username).put("password", password);
-            }
-            catch (JSONException jsonException)
+                requestBody = RequestBody.create(Constants.JSON,
+                        new JSONObject().put(Constants.ParameterNames.USERNAME, username).put(Constants.ParameterNames.PASSWORD, password).toString());
+            } catch (JSONException jsonException)
             {
                 // The program should NEVER reach here.
                 jsonException.printStackTrace();
                 return;
             }
 
-            requestQueue.add(new JsonObjectRequest(Request.Method.POST,
-                    Utils.createUrl("/login"),
-                    requestBody,
-                    response ->
+            OkHttpClient httpClient = new OkHttpClient();
+
+            Request loginPostRequest = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LOGIN)).post(requestBody).build();
+
+            httpClient.newCall(loginPostRequest).enqueue(new Callback()
+            {
+                @Override
+                public void onFailure(Call p_call, IOException p_ioException)
+                {
+                    runOnUiThread(() -> errorPanel.setText(StringResources.UNABLE_TO_CONNECT_TO_SERVER));
+                }
+
+                @Override
+                public void onResponse(Call p_call, Response p_response) throws IOException
+                {
+                    if (p_response.isSuccessful())
                     {
                         try
                         {
-                            Intent intent = new Intent(this, HomePage.class);
+                            JSONObject response = new JSONObject(p_response.body().string());
+                            Intent intent = new Intent(loginPage, HomePage.class);
                             intent.putExtra(Constants.Keys.TOKEN, response.get(Constants.Keys.TOKEN).toString());
                             startActivity(intent);
-                        }
-                        catch (JSONException jsonException)
-                        {
-                            jsonException.printStackTrace();
-                        }
-                    },
-                    error ->
-                    {
-                        errorPanel.setText("Unable to authenticate.");
-                    }
-            ));
 
+                        } catch (JSONException p_jsonException)
+                        {
+                            p_jsonException.printStackTrace();
+                        }
+                    } else
+                    {
+                        runOnUiThread(() -> errorPanel.setText(StringResources.INVALID_CREDENTIALS));
+                    }
+                }
+            });
         });
 
     }

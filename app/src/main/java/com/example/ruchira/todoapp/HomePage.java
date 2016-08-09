@@ -5,60 +5,63 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class HomePage extends AppCompatActivity
 {
     private void refreshTasks(Bundle p_extrasBundle)
     {
         TextView todoListPanel = (TextView) findViewById(R.id.todoListPanel);
+        TextView homePageErrorPanel = (TextView) findViewById(R.id.homePageErrorPanel);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        Request request = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LIST))
+                .addHeader(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN)).build();
 
-        JsonObjectRequest getTodoItemsRequest = new JsonObjectRequest(Utils.createUrl("/list"), null,
-                response -> {
+        OkHttpClient httpClient = new OkHttpClient();
+        httpClient.newCall(request).enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call p_call, IOException p_ioException)
+            {
+                runOnUiThread(() -> homePageErrorPanel.setText(StringResources.UNABLE_TO_FETCH_TODO_LIST));
+            }
+
+            @Override
+            public void onResponse(Call p_call, Response p_response) throws IOException
+            {
+                if (p_response.isSuccessful())
+                {
                     try
                     {
-                        JSONArray tasks = response.getJSONArray("tasks");
+                        JSONObject responseBody = new JSONObject(p_response.body().string());
+                        JSONArray tasks = responseBody.getJSONArray(Constants.JsonPropertyNames.TASKS);
 
                         StringBuilder stringBuilder = new StringBuilder();
 
-                        for(int i=0; i< tasks.length(); i++)
+                        for (int i = 0; i < tasks.length(); i++)
                         {
-                            stringBuilder.append(tasks.getJSONObject(i).getString("task") + "\n");
+                            stringBuilder.append(tasks.getJSONObject(i).getString(Constants.JsonPropertyNames.TASK) + "\n");
                         }
 
-                        todoListPanel.setText(stringBuilder.toString().trim());
+                        runOnUiThread(() -> todoListPanel.setText(stringBuilder.toString().trim()));
                     }
-                    catch (JSONException e)
+                    catch (JSONException p_jsonException)
                     {
-                        e.printStackTrace();
+                        p_jsonException.printStackTrace();
                     }
-                },
-                error -> {
-                    error.printStackTrace();
-                }){
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                Map<String, String> map = new HashMap<>();
-                map.put(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN));
-
-                return map;
+                }
             }
-        };
-
-        requestQueue.add(getTodoItemsRequest);
+        });
     }
 
     @Override
