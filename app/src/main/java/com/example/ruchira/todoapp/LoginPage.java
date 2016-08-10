@@ -64,7 +64,7 @@ public class LoginPage extends AppCompatActivity
                 @Override
                 public void onFailure(Call p_call, IOException p_ioException)
                 {
-                    runOnUiThread(() -> errorPanel.setText(StringResources.UNABLE_TO_CONNECT_TO_SERVER));
+                    errorPanel.setText(StringResources.UNABLE_TO_CONNECT_TO_SERVER);
                 }
 
                 @Override
@@ -85,7 +85,7 @@ public class LoginPage extends AppCompatActivity
                         }
                     } else
                     {
-                        runOnUiThread(() -> errorPanel.setText(StringResources.INVALID_CREDENTIALS));
+                        errorPanel.setText(StringResources.INVALID_CREDENTIALS);
                     }
                 }
             });
