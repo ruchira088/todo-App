@@ -85,7 +85,7 @@ public class LoginPage extends AppCompatActivity
                         }
                     } else
                     {
-                        errorPanel.setText(StringResources.INVALID_CREDENTIALS);
+                        runOnUiThread(() -> errorPanel.setText(StringResources.INVALID_CREDENTIALS));
                     }
                 }
             });
