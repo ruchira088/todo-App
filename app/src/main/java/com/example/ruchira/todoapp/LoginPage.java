@@ -41,10 +41,10 @@ public class LoginPage extends AppCompatActivity
         loginButton.setOnClickListener(new View.OnClickListener()
            {
                @Override
-               public void onClick(View view)
+               public void onClick(View p_view)
                {
 
-                   String username = usernameField.getText().toString();
+                   final String username = usernameField.getText().toString();
                    String password = passwordField.getText().toString();
 
                    RequestBody requestBody = null;
