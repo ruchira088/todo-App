@@ -1,6 +1,7 @@
 package com.example.ruchira.todoapp;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.View;
 import android.widget.TextView;
 
@@ -8,25 +9,35 @@ public class TodoItem extends View
 {
     private TextView m_textView;
 
+    public TodoItem(Context p_context)
+    {
+        super(p_context);
+        m_textView = new TextView(p_context);
+    }
+
     public TodoItem setText(String p_text)
     {
         m_textView.setText(p_text);
         return this;
     }
 
-    public TodoItem setClickListener(String p_id)
+    public TodoItem setClickListener(final String p_id)
     {
-        m_textView.setOnClickListener(view -> {
-            System.out.println(p_id);
+        m_textView.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                System.out.println(p_id);
+            }
         });
 
         return this;
     }
 
-
-    public TodoItem(Context p_context)
+    @Override
+    protected void onDraw(Canvas canvas)
     {
-        super(p_context);
-        m_textView = new TextView(p_context);
+        m_textView.draw(canvas);
     }
 }

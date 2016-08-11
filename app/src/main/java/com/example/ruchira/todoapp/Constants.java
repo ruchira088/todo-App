@@ -35,6 +35,8 @@ public class Constants
     {
         public static final String LOGIN = "/account/login";
 
+        public static final String TASK = "/task";
+
         public static final String LIST = "/list";
     }
 }
