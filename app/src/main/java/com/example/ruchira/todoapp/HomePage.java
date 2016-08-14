@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ import okhttp3.Response;
 
 public class HomePage extends AppCompatActivity
 {
+    final Context context = this;
+
     /**
      * Refreshes the task list displayed in the todo list.
      *
@@ -41,8 +44,6 @@ public class HomePage extends AppCompatActivity
         // Create a request to fetch the tasks list
         Request request = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LIST))
                 .addHeader(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN)).build();
-
-        final Context context = this;
 
         final OkHttpClient httpClient = new OkHttpClient();
 
@@ -119,10 +120,21 @@ public class HomePage extends AppCompatActivity
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
     {
-        System.out.println("onCreate");
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_home_page);
         final Bundle extrasBundle = getIntent().getExtras();
+
+        Button addTaskButton = (Button) findViewById(R.id.addTaskButton);
+        addTaskButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+                Intent intent = new Intent(context, TaskPage.class);
+                intent.putExtra(Constants.Keys.TOKEN, extrasBundle.getString(Constants.Keys.TOKEN));
+                startActivity(intent);
+            }
+        });
 
         ImageButton imageButton = (ImageButton) findViewById(R.id.refreshBtn);
         imageButton.setOnClickListener(new View.OnClickListener()

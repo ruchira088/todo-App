@@ -79,8 +79,16 @@ public class TaskPage extends AppCompatActivity
             setProgressBarValue.apply(0);
         }
 
-        Button saveButton = (Button) findViewById(R.id.saveButton);
+
         Button cancelButton = (Button) findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+                finish();
+            }
+        });
 
         progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -113,6 +121,7 @@ public class TaskPage extends AppCompatActivity
             }
         };
 
+        Button saveButton = (Button) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener()
         {
             private void saveTask(Task p_task)
@@ -134,13 +143,13 @@ public class TaskPage extends AppCompatActivity
                 httpClient.newCall(request).enqueue(new Callback()
                 {
                     @Override
-                    public void onFailure(Call call, IOException e)
+                    public void onFailure(Call p_call, IOException p_ioException)
                     {
 
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException
+                    public void onResponse(Call p_call, Response p_response) throws IOException
                     {
                         finish();
                     }
