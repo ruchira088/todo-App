@@ -12,10 +12,16 @@ import android.widget.TextView;
 import com.example.ruchira.todoapp.models.Task;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TaskPage extends AppCompatActivity
 {
@@ -24,6 +30,7 @@ public class TaskPage extends AppCompatActivity
     {
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_task_page);
+        final String token = getIntent().getExtras().getString(Constants.Keys.TOKEN);
 
         final EditText titleText = (EditText) findViewById(R.id.titleText);
         final SeekBar progressBar = (SeekBar) findViewById(R.id.progressBar);
@@ -108,24 +115,47 @@ public class TaskPage extends AppCompatActivity
 
         saveButton.setOnClickListener(new View.OnClickListener()
         {
+            private void saveTask(Task p_task)
+            {
+                OkHttpClient httpClient = new OkHttpClient();
+                RequestBody requestBody = RequestBody.create(Constants.JSON, new Gson().toJson(p_task));
+
+                Request.Builder requestBuilder = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.TASK)).addHeader(Constants.Keys.TOKEN, token);
+                Request request = null;
+
+                if(p_task.isNew())
+                {
+                    request = requestBuilder.post(requestBody).build();
+                } else
+                {
+                    request = requestBuilder.put(requestBody).build();
+                }
+
+                httpClient.newCall(request).enqueue(new Callback()
+                {
+                    @Override
+                    public void onFailure(Call call, IOException e)
+                    {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException
+                    {
+                        finish();
+                    }
+                });
+            }
+
             @Override
-            public void onClick(View view)
+            public void onClick(View p_view)
             {
                 task.setTaskName(titleText.getText().toString())
                         .setDueDate(getDateFromDatePicker.apply(dueDatePicker))
                         .setProgress(progressBar.getProgress());
 
-                String jsonTask = new Gson().toJson(task);
-
-                System.out.println(jsonTask);
-
+                saveTask(task);
             }
         });
-    }
-
-    private void saveTask(Task p_task)
-    {
-        OkHttpClient httpClient = new OkHttpClient();
-
     }
 }

@@ -89,6 +89,7 @@ public class HomePage extends AppCompatActivity
                             public void onClick(View p_view)
                             {
                                 Intent intent = new Intent(context, TaskPage.class);
+                                intent.putExtra(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN));
                                 intent.putExtra(Constants.Keys.TASK, new Gson().toJson(task));
                                 startActivity(intent);
                             }
@@ -180,8 +181,16 @@ public class HomePage extends AppCompatActivity
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+        refreshTasks(getIntent().getExtras());
+    }
+
+    @Override
     protected void onCreate(Bundle p_savedInstanceState)
     {
+        System.out.println("onCreate");
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_home_page);
         final Bundle extrasBundle = getIntent().getExtras();
@@ -195,6 +204,5 @@ public class HomePage extends AppCompatActivity
                 refreshTasks(extrasBundle);
             }
         });
-        refreshTasks(extrasBundle);
     }
 }
