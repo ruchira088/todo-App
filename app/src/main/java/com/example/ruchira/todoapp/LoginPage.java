@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.ruchira.todoapp.models.UserToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
@@ -20,6 +21,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * This is the login page activity
+ */
 public class LoginPage extends AppCompatActivity
 {
     @Override
@@ -27,49 +31,53 @@ public class LoginPage extends AppCompatActivity
     {
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_login_page);
-
         final LoginPage loginPage = this;
 
         final TextView errorPanel = (TextView) findViewById(R.id.errorPanel);
         errorPanel.setText(Constants.EMPTY_TEXT);
 
-        final EditText usernameField = (EditText) findViewById(R.id.usernameText);
-        final EditText passwordField = (EditText) findViewById(R.id.passwordText);
-
         Button loginButton = (Button) findViewById(R.id.loginButton);
-
         loginButton.setOnClickListener(new View.OnClickListener()
            {
                @Override
                public void onClick(View p_view)
                {
-
-                   final String username = usernameField.getText().toString();
-                   String password = passwordField.getText().toString();
-
-                   RequestBody requestBody = null;
-
-                   try
+                   Function<Integer, String> getTextContents = new Function<Integer, String>()
                    {
-                       requestBody = RequestBody.create(Constants.JSON,
-                               new JSONObject().put(Constants.ParameterNames.USERNAME, username).put(Constants.ParameterNames.PASSWORD, password).toString());
-                   } catch (JSONException jsonException)
-                   {
-                       // The program should NEVER reach here.
-                       jsonException.printStackTrace();
-                       return;
-                   }
+                       @Override
+                       public String apply(Integer p_input)
+                       {
+                           EditText editText = (EditText) findViewById(p_input);
+                           return editText.getText().toString();
+                       }
+                   };
+
+                   String username = getTextContents.apply(R.id.usernameText);
+                   String password = getTextContents.apply(R.id.passwordText);
+
+                   JsonObject requestBodyJson = new JsonObject();
+                   requestBodyJson.addProperty(Constants.ParameterNames.USERNAME, username);
+                   requestBodyJson.addProperty(Constants.ParameterNames.PASSWORD, password);
+                   RequestBody requestBody = RequestBody.create(Constants.JSON, new Gson().toJson(requestBodyJson));
 
                    OkHttpClient httpClient = new OkHttpClient();
 
-                   Request loginPostRequest = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LOGIN)).post(requestBody).build();
+                   Request loginPostRequest = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LOGIN))
+                           .post(requestBody).build();
 
                    httpClient.newCall(loginPostRequest).enqueue(new Callback()
                    {
                        @Override
                        public void onFailure(Call p_call, IOException p_ioException)
                        {
-                           errorPanel.setText(StringResources.UNABLE_TO_CONNECT_TO_SERVER);
+                           runOnUiThread(new Runnable()
+                           {
+                               @Override
+                               public void run()
+                               {
+                                   errorPanel.setText(StringResources.UNABLE_TO_CONNECT_TO_SERVER);
+                               }
+                           });
                        }
 
                        @Override
@@ -77,17 +85,10 @@ public class LoginPage extends AppCompatActivity
                        {
                            if (p_response.isSuccessful())
                            {
-                               try
-                               {
-                                   JSONObject response = new JSONObject(p_response.body().string());
-                                   Intent intent = new Intent(loginPage, HomePage.class);
-                                   intent.putExtra(Constants.Keys.TOKEN, response.get(Constants.Keys.TOKEN).toString());
-                                   startActivity(intent);
-
-                               } catch (JSONException p_jsonException)
-                               {
-                                   p_jsonException.printStackTrace();
-                               }
+                               UserToken userToken = new Gson().fromJson(p_response.body().string(), UserToken.class);
+                               Intent intent = new Intent(loginPage, HomePage.class);
+                               intent.putExtra(Constants.Keys.TOKEN, userToken.getToken());
+                               startActivity(intent);
                            } else
                            {
                                runOnUiThread(new Runnable()
@@ -105,6 +106,5 @@ public class LoginPage extends AppCompatActivity
            }
 
         );
-
     }
 }

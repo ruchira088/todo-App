@@ -1,6 +1,7 @@
 package com.example.ruchira.todoapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -30,8 +31,7 @@ public class HomePage extends AppCompatActivity
     /**
      * Refreshes the task list displayed in the todo list.
      *
-     * @param p_extrasBundle
-     *  The extras {@link Bundle} which contains the authentication token.
+     * @param p_extrasBundle The extras {@link Bundle} which contains the authentication token.
      */
     private void refreshTasks(final Bundle p_extrasBundle)
     {
@@ -45,12 +45,20 @@ public class HomePage extends AppCompatActivity
         final Context context = this;
 
         final OkHttpClient httpClient = new OkHttpClient();
+
         httpClient.newCall(request).enqueue(new Callback()
         {
             @Override
             public void onFailure(Call p_call, IOException p_ioException)
             {
-                homePageErrorPanel.setText(StringResources.UNABLE_TO_FETCH_TODO_LIST);
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        homePageErrorPanel.setText(StringResources.UNABLE_TO_FETCH_TODO_LIST);
+                    }
+                });
             }
 
             @Override
@@ -70,19 +78,30 @@ public class HomePage extends AppCompatActivity
                 {
                     TasksList tasksList = new Gson().fromJson(p_response.body().string(), TasksList.class);
 
-                    for(Task task: tasksList.getTasks())
+                    for (final Task task : tasksList.getTasks())
                     {
                         final TextView textView = new TextView(context);
                         textView.setText(task.getTaskName());
 
-                        runOnUiThread(new Runnable()
+                        textView.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View p_view)
                             {
-                                @Override
-                                public void run()
-                                {
-                                    todoList.addView(textView);
-                                }
-                            });
+                                Intent intent = new Intent(context, TaskPage.class);
+                                intent.putExtra(Constants.Keys.TASK, new Gson().toJson(task));
+                                startActivity(intent);
+                            }
+                        });
+
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                todoList.addView(textView);
+                            }
+                        });
                     }
 
 //                    try
@@ -161,9 +180,9 @@ public class HomePage extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate(Bundle p_savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_home_page);
         final Bundle extrasBundle = getIntent().getExtras();
 
