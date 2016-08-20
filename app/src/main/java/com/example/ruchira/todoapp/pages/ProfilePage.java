@@ -18,7 +18,15 @@ import com.example.ruchira.todoapp.Function;
 import com.example.ruchira.todoapp.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
@@ -62,6 +70,38 @@ public class ProfilePage extends AppCompatActivity
                 m_fileUri = Uri.fromFile(getOutputMediaFile.apply(null));
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, m_fileUri);
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        Button skipButton = (Button) findViewById(R.id.skipButton);
+
+        Button updateButton = (Button) findViewById(R.id.updateButton);
+        updateButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+                MultipartBody multipartBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("title", "Hello World").build();
+                Request request = new Request.Builder().url("http://httpbin.org/post").post(multipartBody).build();
+
+                OkHttpClient httpClient = new OkHttpClient();
+
+                httpClient.newCall(request).enqueue(new Callback()
+                {
+                    @Override
+                    public void onFailure(Call p_call, IOException p_e)
+                    {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call p_call, Response p_response) throws IOException
+                    {
+                        System.out.println(p_response.body().string());
+                    }
+                });
+
+
             }
         });
 
