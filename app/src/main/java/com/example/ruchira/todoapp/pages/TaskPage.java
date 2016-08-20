@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.example.ruchira.todoapp.pages;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,10 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.ruchira.todoapp.Constants;
+import com.example.ruchira.todoapp.Function;
+import com.example.ruchira.todoapp.R;
+import com.example.ruchira.todoapp.Utils;
 import com.example.ruchira.todoapp.models.Task;
 import com.google.gson.Gson;
 

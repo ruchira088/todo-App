@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.example.ruchira.todoapp.pages;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,13 +10,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.ruchira.todoapp.Constants;
+import com.example.ruchira.todoapp.R;
+import com.example.ruchira.todoapp.StringResources;
+import com.example.ruchira.todoapp.Utils;
 import com.example.ruchira.todoapp.models.Task;
 import com.example.ruchira.todoapp.models.TasksList;
 import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -24,7 +24,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomePage extends AppCompatActivity
