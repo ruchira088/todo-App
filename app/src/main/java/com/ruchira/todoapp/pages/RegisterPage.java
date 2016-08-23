@@ -8,13 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.ruchira.todoapp.Constants;
 import com.ruchira.todoapp.R;
 import com.ruchira.todoapp.Utils;
 import com.ruchira.todoapp.models.Message;
 import com.ruchira.todoapp.models.UserToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ public class RegisterPage extends AppCompatActivity
                 String password = passwordEditText.getText().toString();
                 String confirmPassword = confirmPasswordEditText.getText().toString();
 
-                if(password.equals(confirmPassword))
+                if (password.equals(confirmPassword))
                 {
                     JsonObject body = new JsonObject();
                     body.addProperty(Constants.ParameterNames.USERNAME, username);
@@ -86,10 +86,12 @@ public class RegisterPage extends AppCompatActivity
                             final Gson gson = new Gson();
                             final String responseBody = p_response.body().string();
 
-                            if(p_response.isSuccessful())
+                            if (p_response.isSuccessful())
                             {
                                 UserToken userToken = gson.fromJson(responseBody, UserToken.class);
                                 Intent intent = new Intent(registerPage, ProfilePage.class);
+                                intent.putExtra(Constants.Keys.TOKEN, userToken.getToken());
+                                startActivity(intent);
                             } else
                             {
                                 runOnUiThread(new Runnable()

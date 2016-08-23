@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.ruchira.todoapp.Constants;
 import com.ruchira.todoapp.Function;
 import com.ruchira.todoapp.R;
+import com.ruchira.todoapp.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +43,6 @@ public class ProfilePage extends AppCompatActivity
     private Button m_takePhotoButton;
 
     private File m_photoFile;
-
-    private Uri m_fileUri;
 
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
@@ -88,10 +87,14 @@ public class ProfilePage extends AppCompatActivity
                 MultipartBody multipartBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("title", "Hello World")
-                        .addFormDataPart("image", "my_photo.jpg", RequestBody.create(Constants.JPG, m_photoFile))
+                        .addFormDataPart(Constants.ParameterNames.IMAGE_FILE, m_photoFile.getName(), RequestBody.create(Constants.JPG, m_photoFile))
                         .build();
 
-                Request request = new Request.Builder().url("http://httpbin.org/post").post(multipartBody).build();
+                Request request = new Request.Builder()
+                        .url(Utils.createUrl(Constants.ApiEntryPoints.PROFILE))
+                        .patch(multipartBody)
+                        .addHeader(Constants.Keys.TOKEN, getIntent().getStringExtra(Constants.Keys.TOKEN))
+                        .build();
 
                 OkHttpClient httpClient = new OkHttpClient();
 
@@ -114,10 +117,10 @@ public class ProfilePage extends AppCompatActivity
             }
         });
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
             m_takePhotoButton.setEnabled(false);
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_FOR_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_FOR_EXTERNAL_STORAGE);
         }
     }
 
@@ -126,7 +129,7 @@ public class ProfilePage extends AppCompatActivity
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == REQUEST_PERMISSION_FOR_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (requestCode == REQUEST_PERMISSION_FOR_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED)
         {
             m_takePhotoButton.setEnabled(true);
         }
@@ -137,12 +140,14 @@ public class ProfilePage extends AppCompatActivity
     {
         super.onActivityResult(p_requestCode, p_resultCode, p_data);
 
-        if(p_requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && p_resultCode == RESULT_OK)
+        if (p_requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && p_resultCode == RESULT_OK)
         {
-            ImageView profileImageView = (ImageView) findViewById(R.id.profileImageView);
-            profileImageView.setImageURI(m_fileUri);
+            Uri fileUri = Uri.fromFile(m_photoFile);
 
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, m_fileUri);
+            ImageView profileImageView = (ImageView) findViewById(R.id.profileImageView);
+            profileImageView.setImageURI(fileUri);
+
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri);
             sendBroadcast(intent);
         }
     }

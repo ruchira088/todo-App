@@ -4,7 +4,7 @@ import okhttp3.MediaType;
 
 public class Constants
 {
-    public static final String SERVER_URL = "http://192.168.0.29:8000";
+    public static final String SERVER_URL = "http://192.168.0.18:8000";
 
     public static final String EMPTY_TEXT = "";
 
@@ -23,6 +23,8 @@ public class Constants
         public static final String USERNAME = "username";
 
         public static final String PASSWORD = "password";
+
+        public static final String IMAGE_FILE = "imageFile";
     }
 
     public static class ApiEntryPoints
@@ -30,6 +32,8 @@ public class Constants
         public static final String LOGIN = "/account/login";
 
         public static final String REGISTER = "/account/register";
+
+        public static final String PROFILE = "/account/register";
 
         public static final String TASK = "/task";
 
