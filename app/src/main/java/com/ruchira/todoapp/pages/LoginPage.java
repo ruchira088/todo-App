@@ -1,6 +1,7 @@
 package com.ruchira.todoapp.pages;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -29,12 +30,13 @@ import okhttp3.Response;
 /**
  * This is the login page activity
  */
-public class LoginPage extends AppCompatActivity
+public class LoginPage extends UnauthenticatedPage
 {
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
     {
         super.onCreate(p_savedInstanceState);
+
         setContentView(R.layout.activity_login_page);
         final LoginPage loginPage = this;
 
@@ -101,8 +103,9 @@ public class LoginPage extends AppCompatActivity
                            if (p_response.isSuccessful())
                            {
                                UserToken userToken = new Gson().fromJson(p_response.body().string(), UserToken.class);
+                               saveUserToken(userToken);
+
                                Intent intent = new Intent(loginPage, HomePage.class);
-                               intent.putExtra(Constants.Keys.TOKEN, userToken.getToken());
                                startActivity(intent);
                            } else
                            {
@@ -119,7 +122,6 @@ public class LoginPage extends AppCompatActivity
                    });
                }
            }
-
         );
     }
 }

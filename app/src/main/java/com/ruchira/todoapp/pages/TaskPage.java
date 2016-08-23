@@ -27,14 +27,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class TaskPage extends AppCompatActivity
+public class TaskPage extends AuthenticatedPage
 {
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
     {
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_task_page);
-        final String token = getIntent().getExtras().getString(Constants.Keys.TOKEN);
 
         final EditText titleText = (EditText) findViewById(R.id.titleText);
         final SeekBar progressBar = (SeekBar) findViewById(R.id.progressBar);
@@ -73,7 +72,7 @@ public class TaskPage extends AppCompatActivity
         String jsonTask = getIntent().getExtras().getString(Constants.Keys.TASK);
         final Task task = jsonTask == null ? new Task() : new Gson().fromJson(jsonTask, Task.class);
 
-        if(!task.isNew())
+        if (!task.isNew())
         {
             titleText.setText(task.getTaskName());
             setDatePickerValue.apply(task.getDueDate());
@@ -103,10 +102,14 @@ public class TaskPage extends AppCompatActivity
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+            }
         });
 
         final Function<DatePicker, Date> getDateFromDatePicker = new Function<DatePicker, Date>()
@@ -133,10 +136,10 @@ public class TaskPage extends AppCompatActivity
                 OkHttpClient httpClient = new OkHttpClient();
                 RequestBody requestBody = RequestBody.create(Constants.JSON, new Gson().toJson(p_task));
 
-                Request.Builder requestBuilder = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.TASK)).addHeader(Constants.Keys.TOKEN, token);
+                Request.Builder requestBuilder = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.TASK)).addHeader(Constants.Keys.TOKEN, getUserToken());
                 Request request = null;
 
-                if(p_task.isNew())
+                if (p_task.isNew())
                 {
                     request = requestBuilder.post(requestBody).build();
                 } else

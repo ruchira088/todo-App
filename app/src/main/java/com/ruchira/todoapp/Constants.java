@@ -4,6 +4,8 @@ import okhttp3.MediaType;
 
 public class Constants
 {
+    public static final String APP_NAME = "com.ruchira.todoapp";
+
     public static final String SERVER_URL = "http://192.168.0.18:8000";
 
     public static final String EMPTY_TEXT = "";

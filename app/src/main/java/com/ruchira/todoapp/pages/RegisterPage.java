@@ -25,7 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RegisterPage extends AppCompatActivity
+public class RegisterPage extends UnauthenticatedPage
 {
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
@@ -89,8 +89,9 @@ public class RegisterPage extends AppCompatActivity
                             if (p_response.isSuccessful())
                             {
                                 UserToken userToken = gson.fromJson(responseBody, UserToken.class);
+                                saveUserToken(userToken);
+
                                 Intent intent = new Intent(registerPage, ProfilePage.class);
-                                intent.putExtra(Constants.Keys.TOKEN, userToken.getToken());
                                 startActivity(intent);
                             } else
                             {
@@ -105,14 +106,11 @@ public class RegisterPage extends AppCompatActivity
                             }
                         }
                     });
-
-
                 } else
                 {
                     messagePanel.setText("Passwords do NOT match.");
                 }
             }
         });
-
     }
 }

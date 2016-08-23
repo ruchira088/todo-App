@@ -3,6 +3,7 @@ package com.ruchira.todoapp.pages;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +38,7 @@ import okhttp3.Response;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
-public class ProfilePage extends AppCompatActivity
+public class ProfilePage extends AuthenticatedPage
 {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
@@ -49,9 +50,7 @@ public class ProfilePage extends AppCompatActivity
 
     private void gotoHomePage(Context p_context)
     {
-        Intent intent = new Intent(p_context, HomePage.class);
-        intent.putExtras(getIntent());
-        startActivity(intent);
+        startActivity(new Intent(p_context, HomePage.class));
     }
 
     @Override
@@ -113,7 +112,6 @@ public class ProfilePage extends AppCompatActivity
                     }
                 };
 
-
                 final String firstName = getText.apply(R.id.firstNameText);
                 final String lastName = getText.apply(R.id.lastNameText);
 
@@ -127,7 +125,7 @@ public class ProfilePage extends AppCompatActivity
                 Request request = new Request.Builder()
                         .url(Utils.createUrl(Constants.ApiEntryPoints.PROFILE))
                         .patch(multipartBody)
-                        .addHeader(Constants.Keys.TOKEN, getIntent().getStringExtra(Constants.Keys.TOKEN))
+                        .addHeader(Constants.Keys.TOKEN, getUserToken())
                         .build();
 
                 OkHttpClient httpClient = new OkHttpClient();

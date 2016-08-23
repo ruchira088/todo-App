@@ -2,6 +2,7 @@ package com.ruchira.todoapp.pages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,23 +27,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class HomePage extends AppCompatActivity
+public class HomePage extends AuthenticatedPage
 {
-    final Context context = this;
+    final Context m_context = this;
 
     /**
      * Refreshes the task list displayed in the todo list.
-     *
-     * @param p_extrasBundle The extras {@link Bundle} which contains the authentication token.
      */
-    private void refreshTasks(final Bundle p_extrasBundle)
+    private void refreshTasks()
     {
         final TextView homePageErrorPanel = (TextView) findViewById(R.id.homePageErrorPanel);
         final LinearLayout todoList = (LinearLayout) findViewById(R.id.todoList);
 
         // Create a request to fetch the tasks list
         Request request = new Request.Builder().url(Utils.createUrl(Constants.ApiEntryPoints.LIST))
-                .addHeader(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN)).build();
+                .addHeader(Constants.Keys.TOKEN, getUserToken()).build();
 
         final OkHttpClient httpClient = new OkHttpClient();
 
@@ -80,7 +79,7 @@ public class HomePage extends AppCompatActivity
 
                     for (final Task task : tasksList.getTasks())
                     {
-                        final TextView textView = new TextView(context);
+                        final TextView textView = new TextView(m_context);
                         textView.setText(task.getTaskName());
 
                         textView.setOnClickListener(new View.OnClickListener()
@@ -88,8 +87,7 @@ public class HomePage extends AppCompatActivity
                             @Override
                             public void onClick(View p_view)
                             {
-                                Intent intent = new Intent(context, TaskPage.class);
-                                intent.putExtra(Constants.Keys.TOKEN, p_extrasBundle.getString(Constants.Keys.TOKEN));
+                                Intent intent = new Intent(m_context, TaskPage.class);
                                 intent.putExtra(Constants.Keys.TASK, new Gson().toJson(task));
                                 startActivity(intent);
                             }
@@ -113,7 +111,7 @@ public class HomePage extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-        refreshTasks(getIntent().getExtras());
+        refreshTasks();
     }
 
     @Override
@@ -121,7 +119,6 @@ public class HomePage extends AppCompatActivity
     {
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        final Bundle extrasBundle = getIntent().getExtras();
 
         Button addTaskButton = (Button) findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(new View.OnClickListener()
@@ -129,9 +126,19 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View p_view)
             {
-                Intent intent = new Intent(context, TaskPage.class);
-                intent.putExtra(Constants.Keys.TOKEN, extrasBundle.getString(Constants.Keys.TOKEN));
+                Intent intent = new Intent(m_context, TaskPage.class);
                 startActivity(intent);
+            }
+        });
+
+        Button logOutButton = (Button) findViewById(R.id.logOutButton);
+        logOutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+                removeUserToken();
+                startActivity(new Intent(m_context, LoginPage.class));
             }
         });
 
@@ -141,7 +148,7 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View p_view)
             {
-                refreshTasks(extrasBundle);
+                refreshTasks();
             }
         });
     }
