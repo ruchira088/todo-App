@@ -41,13 +41,13 @@ public class LoginPage extends AppCompatActivity
         final TextView errorPanel = (TextView) findViewById(R.id.errorPanel);
         errorPanel.setText(Constants.EMPTY_TEXT);
 
-        TextView newUserLabel = (TextView) findViewById(R.id.newUserLabel);
+        TextView newUserLabel = (TextView) findViewById(R.id.newUserLabel_right);
         newUserLabel.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View p_view)
             {
-
+                startActivity(new Intent(loginPage, RegisterPage.class));
             }
         });
 

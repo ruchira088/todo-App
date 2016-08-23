@@ -66,14 +66,32 @@
         android:layout_marginTop="20dp"
         android:singleLine="true"/>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="New user ? touch here to create account."
-        android:id="@+id/newUserLabel"
+        android:layout_marginBottom="47dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="42dp"/>
+        android:id="@+id/newUserFooter">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="New user ?"
+            android:id="@+id/newUserLabel_left"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="touch here to create account."
+            android:id="@+id/newUserLabel_right"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/newUserLabel_left"
+            android:textColor="#2d3d7e"
+            android:textStyle="bold"/>
+    </RelativeLayout>
 
 </RelativeLayout>
