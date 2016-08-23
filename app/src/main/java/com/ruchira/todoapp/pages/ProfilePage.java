@@ -1,6 +1,7 @@
 package com.ruchira.todoapp.pages;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,7 +13,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ruchira.todoapp.Constants;
 import com.ruchira.todoapp.Function;
@@ -44,11 +47,20 @@ public class ProfilePage extends AppCompatActivity
 
     private File m_photoFile;
 
+    private void gotoHomePage(Context p_context)
+    {
+        Intent intent = new Intent(p_context, HomePage.class);
+        intent.putExtras(getIntent());
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle p_savedInstanceState)
     {
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_profile_page);
+
+        final ProfilePage profilePage = this;
 
         m_takePhotoButton = (Button) findViewById(R.id.takePhotoButton);
 
@@ -62,7 +74,7 @@ public class ProfilePage extends AppCompatActivity
                     @Override
                     public File apply(Void p_input)
                     {
-                        String fileName = String.valueOf(new Date().getTime()) + ".jpg";
+                        String fileName = String.valueOf(new Date().getTime()) + Constants.JPG_EXTENSION;
                         File file = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES), fileName);
 
                         return file;
@@ -77,6 +89,26 @@ public class ProfilePage extends AppCompatActivity
         });
 
         Button skipButton = (Button) findViewById(R.id.skipButton);
+        skipButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+                gotoHomePage(profilePage);
+            }
+        });
+
+        Function<Integer, String> getText = new Function<Integer, String>()
+        {
+            @Override
+            public String apply(Integer p_input)
+            {
+                return ((TextView) findViewById(p_input)).getText().toString();
+            }
+        };
+
+        final String firstName = getText.apply(R.id.firstNameText);
+        final String lastName = getText.apply(R.id.lastNameText);
 
         Button updateButton = (Button) findViewById(R.id.updateButton);
         updateButton.setOnClickListener(new View.OnClickListener()
@@ -86,7 +118,8 @@ public class ProfilePage extends AppCompatActivity
             {
                 MultipartBody multipartBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("title", "Hello World")
+                        .addFormDataPart(Constants.ParameterNames.FIRST_NAME, firstName)
+                        .addFormDataPart(Constants.ParameterNames.LAST_NAME, lastName)
                         .addFormDataPart(Constants.ParameterNames.IMAGE_FILE, m_photoFile.getName(), RequestBody.create(Constants.JPG, m_photoFile))
                         .build();
 
@@ -110,6 +143,11 @@ public class ProfilePage extends AppCompatActivity
                     public void onResponse(Call p_call, Response p_response) throws IOException
                     {
                         System.out.println(p_response.body().string());
+
+                        if(p_response.isSuccessful())
+                        {
+                            gotoHomePage(profilePage);
+                        }
                     }
                 });
 

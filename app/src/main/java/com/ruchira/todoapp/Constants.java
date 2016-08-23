@@ -10,6 +10,8 @@ public class Constants
 
     public static final MediaType JPG = MediaType.parse("image/jpg");
 
+    public static final String JPG_EXTENSION = ".jpg";
+
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static class Keys
@@ -23,6 +25,10 @@ public class Constants
         public static final String USERNAME = "username";
 
         public static final String PASSWORD = "password";
+
+        public static final String FIRST_NAME = "firstName";
+
+        public static final String LAST_NAME = "lastName";
 
         public static final String IMAGE_FILE = "imageFile";
     }
