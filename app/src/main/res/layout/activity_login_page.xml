@@ -66,4 +66,14 @@
         android:layout_marginTop="20dp"
         android:singleLine="true"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="New user ? touch here to create account."
+        android:id="@+id/newUserLabel"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="42dp"/>
+
 </RelativeLayout>

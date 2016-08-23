@@ -98,24 +98,25 @@ public class ProfilePage extends AppCompatActivity
             }
         });
 
-        Function<Integer, String> getText = new Function<Integer, String>()
-        {
-            @Override
-            public String apply(Integer p_input)
-            {
-                return ((TextView) findViewById(p_input)).getText().toString();
-            }
-        };
-
-        final String firstName = getText.apply(R.id.firstNameText);
-        final String lastName = getText.apply(R.id.lastNameText);
-
         Button updateButton = (Button) findViewById(R.id.updateButton);
         updateButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View p_view)
             {
+                Function<Integer, String> getText = new Function<Integer, String>()
+                {
+                    @Override
+                    public String apply(Integer p_input)
+                    {
+                        return ((TextView) findViewById(p_input)).getText().toString();
+                    }
+                };
+
+
+                final String firstName = getText.apply(R.id.firstNameText);
+                final String lastName = getText.apply(R.id.lastNameText);
+
                 MultipartBody multipartBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart(Constants.ParameterNames.FIRST_NAME, firstName)

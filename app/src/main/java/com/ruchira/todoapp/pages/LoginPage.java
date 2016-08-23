@@ -41,6 +41,16 @@ public class LoginPage extends AppCompatActivity
         final TextView errorPanel = (TextView) findViewById(R.id.errorPanel);
         errorPanel.setText(Constants.EMPTY_TEXT);
 
+        TextView newUserLabel = (TextView) findViewById(R.id.newUserLabel);
+        newUserLabel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View p_view)
+            {
+
+            }
+        });
+
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener()
            {
