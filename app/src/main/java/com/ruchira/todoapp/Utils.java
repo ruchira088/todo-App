@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.ruchira.todoapp;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

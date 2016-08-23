@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.0"
 
     defaultConfig {
-        applicationId "com.example.ruchira.todoapp"
+        applicationId "com.ruchira.todoapp"
         minSdkVersion 23
         targetSdkVersion 24
         versionCode 1

@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp.pages;
+package com.ruchira.todoapp.pages;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,9 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.example.ruchira.todoapp.Constants;
-import com.example.ruchira.todoapp.Function;
-import com.example.ruchira.todoapp.R;
+import com.ruchira.todoapp.Constants;
+import com.ruchira.todoapp.Function;
+import com.ruchira.todoapp.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.ruchira.todoapp;
 
 import org.junit.Test;
 

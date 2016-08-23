@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp.models;
+package com.ruchira.todoapp.models;
 
 public class UserToken
 {

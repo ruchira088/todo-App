@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.ruchira.todoapp;
 
 public class StringResources
 {

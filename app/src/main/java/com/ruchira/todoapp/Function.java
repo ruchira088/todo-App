@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp;
+package com.ruchira.todoapp;
 
 public interface Function<InputArgType, OutputType>
 {

@@ -1,4 +1,4 @@
-package com.example.ruchira.todoapp.pages;
+package com.ruchira.todoapp.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,12 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.ruchira.todoapp.Constants;
-import com.example.ruchira.todoapp.Function;
-import com.example.ruchira.todoapp.R;
-import com.example.ruchira.todoapp.StringResources;
-import com.example.ruchira.todoapp.Utils;
-import com.example.ruchira.todoapp.models.UserToken;
+import com.ruchira.todoapp.Constants;
+import com.ruchira.todoapp.Function;
+import com.ruchira.todoapp.R;
+import com.ruchira.todoapp.StringResources;
+import com.ruchira.todoapp.Utils;
+import com.ruchira.todoapp.models.UserToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 

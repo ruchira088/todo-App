@@ -1,6 +1,6 @@
-package com.example.ruchira.todoapp.models;
+package com.ruchira.todoapp.models;
 
-import com.example.ruchira.todoapp.Utils;
+import com.ruchira.todoapp.Utils;
 
 import java.util.Date;
 
