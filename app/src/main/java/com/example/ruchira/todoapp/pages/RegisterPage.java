@@ -1,5 +1,6 @@
 package com.example.ruchira.todoapp.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -32,10 +33,11 @@ public class RegisterPage extends AppCompatActivity
         super.onCreate(p_savedInstanceState);
         setContentView(R.layout.activity_register_page);
 
+        final RegisterPage registerPage = this;
+
         final EditText usernameEditText = (EditText) findViewById(R.id.usernameText);
         final EditText passwordEditText = (EditText) findViewById(R.id.passwordText);
         final EditText confirmPasswordEditText = (EditText) findViewById(R.id.confirmPasswordText);
-
         final TextView messagePanel = (TextView) findViewById(R.id.messagePanel);
 
         Button registerButton = (Button) findViewById(R.id.registerButton);
@@ -53,8 +55,6 @@ public class RegisterPage extends AppCompatActivity
                     JsonObject body = new JsonObject();
                     body.addProperty(Constants.ParameterNames.USERNAME, username);
                     body.addProperty(Constants.ParameterNames.PASSWORD, password);
-                    System.out.println(body.toString());
-
                     RequestBody requestBody = RequestBody.create(Constants.JSON, body.toString());
 
                     Request request = new Request.Builder()
@@ -89,6 +89,7 @@ public class RegisterPage extends AppCompatActivity
                             if(p_response.isSuccessful())
                             {
                                 UserToken userToken = gson.fromJson(responseBody, UserToken.class);
+                                Intent intent = new Intent(registerPage, ProfilePage.class);
                             } else
                             {
                                 runOnUiThread(new Runnable()

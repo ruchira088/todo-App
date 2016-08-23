@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.ruchira.todoapp.Constants;
 import com.example.ruchira.todoapp.Function;
 import com.example.ruchira.todoapp.R;
 
@@ -23,9 +24,11 @@ import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
@@ -38,6 +41,8 @@ public class ProfilePage extends AppCompatActivity
     private static final int REQUEST_PERMISSION_FOR_EXTERNAL_STORAGE = 200;
 
     private Button m_takePhotoButton;
+
+    private File m_photoFile;
 
     private Uri m_fileUri;
 
@@ -67,8 +72,8 @@ public class ProfilePage extends AppCompatActivity
                 };
 
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                m_fileUri = Uri.fromFile(getOutputMediaFile.apply(null));
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, m_fileUri);
+                m_photoFile = getOutputMediaFile.apply(null);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(m_photoFile));
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -81,7 +86,12 @@ public class ProfilePage extends AppCompatActivity
             @Override
             public void onClick(View p_view)
             {
-                MultipartBody multipartBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("title", "Hello World").build();
+                MultipartBody multipartBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("title", "Hello World")
+                        .addFormDataPart("image", "my_photo.jpg", RequestBody.create(Constants.JPG, m_photoFile))
+                        .build();
+
                 Request request = new Request.Builder().url("http://httpbin.org/post").post(multipartBody).build();
 
                 OkHttpClient httpClient = new OkHttpClient();

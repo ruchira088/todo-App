@@ -8,6 +8,8 @@ public class Constants
 
     public static final String EMPTY_TEXT = "";
 
+    public static final MediaType JPG = MediaType.parse("image/jpg");
+
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static class Keys
